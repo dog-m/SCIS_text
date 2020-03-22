@@ -13,7 +13,7 @@ end define
 
 define number_or_id
       [number]
-  |   [id]
+  |   '#
 end define
 
 function main
@@ -74,7 +74,7 @@ function process_statement
   where
     __NODE__ [= 2]
   by
-    'X
+    '#
 end function
 
 
