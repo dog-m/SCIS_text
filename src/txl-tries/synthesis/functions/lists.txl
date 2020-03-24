@@ -32,20 +32,16 @@ end function
 1. вход: голова и хвост последовательности
 2. если УРОВЕНЬ = 1 и голова = 2, то вернуть
     Х + хвост
-2. выделить голову хвоста
-3. если голова хвоста - скобочки, то
+3. если хвост содержит скобочки, то
 4. увеличить УРОВЕНЬ
-5. иначе, если голова хвоста - пустота, то
+5. иначе, если хвост пуст, то
 6. уменьшить УРОВЕНЬ
 
 )%
 
 rule apply_filtering
   replace $ [repeat statement]
-    __ITEM__  [statement] __REST__ [repeat statement]
-
-  construct __HEAD__ [repeat statement]
-    __REST__ [head 1]
+    __HEAD__  [statement] __TAIL__ [repeat statement]
 
   import LEVEL [number]
   construct CURRENT_LVL [number]
@@ -53,18 +49,18 @@ rule apply_filtering
 
   % сначала обновляем уровень
   where
-    __HEAD__ [dec_LEVEL] [inc_LEVEL] [TRUE]
+    __TAIL__ [dec_LEVEL] [inc_LEVEL] [TRUE]
 
   % а уже потом проверяем (порядок важен!)
   where
     CURRENT_LVL [= 1]
   
   construct __NEW_ARRAY__ [repeat statement]
-    __ITEM__
+    __HEAD__
   
   by
     __NEW_ARRAY__ [process_statement]
-    [. __REST__]
+    [. __TAIL__]
 end rule
 
 
