@@ -58,8 +58,9 @@ end function
 4. иначе (0) - данная (текущая) коробка находится на 1-м уровне
 5. передать для обработки коробку дальше, получив взамен набор коробок (несколько или одна)
 6. посчитать общее количество красных коробок в полученном (обработанном) наборе
-6. записать результат в "число_коробок_для_пропуска"
+7. записать результат в "число_коробок_для_пропуска"
 #. (без вычета единицы, потому как текущая коробка будет получена/обработана еще раз)
+8. вернуть набор коробок с хвостом последовательности
 
 )%
 
@@ -83,7 +84,7 @@ rule process_only_first_level_boxes
     % +empty
 
   construct __PROCESSED__ [repeat box]
-    __SINGLE_BOX_ARRAY__ [process_box]
+    __SINGLE_BOX_ARRAY__ [process_box_filter __RED_BOX__]
 
   construct _ [repeat box]
     __PROCESSED__ [red_box_counter] % последовательное выполнение
@@ -91,6 +92,18 @@ rule process_only_first_level_boxes
   by
     __PROCESSED__ [. __TAIL__]
 end rule
+
+
+function process_box_filter Box [red]
+  replace [repeat box]
+    __DATA__ [repeat box]
+
+  where
+    Box [do_nothing]    % проверки/фильтрация
+
+  by
+    __DATA__ [process_box]
+end function
 
 
 rule red_box_counter
