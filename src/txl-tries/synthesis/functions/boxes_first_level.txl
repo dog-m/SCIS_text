@@ -69,7 +69,7 @@ rule process_only_first_level_boxes
     __RED_BOX__ [red] __TAIL__ [repeat box]
 
   where
-    __RED_BOX__ [do_nothing]    % проверки/фильтрация
+    __RED_BOX__ [do_nothing]    % проверки/фильтрация по критериям/шаблону
 
   import __SKIP__ [number]
 
@@ -134,8 +134,8 @@ function process_box
     __ORIGIN__ [box]
   by
     '#
-    '[ BEFORE first ']
+    '[ BEFORE first LVL ']
     __ORIGIN__
-    '[ AFTER first ']
+    '[ AFTER first  LVL ']
     '#
 end function
