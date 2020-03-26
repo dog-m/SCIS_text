@@ -1,29 +1,43 @@
 1
 [
+  first and all begin
   (
     2
     [
+      all begin
       (
         3
         [
+          all begin
+          all end
         ]
       )
       4
       [
+        all begin
+        all end
       ]
+      all end
     ]
   )
   <
     5
     [
+      all begin
+      all end
     ]
   >
+  first and all end
 ]
 (
   6
   [
+    first and all begin
+    first and all end
   ]
 )
 7
 [
+  first and all begin
+  first and all end
 ]

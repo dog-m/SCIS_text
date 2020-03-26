@@ -68,6 +68,9 @@ rule process_only_first_level_boxes
   replace $ [repeat box]
     __RED_BOX__ [red] __TAIL__ [repeat box]
 
+  where
+    __RED_BOX__ [do_nothing]    % проверки/фильтрация
+
   import __SKIP__ [number]
 
   construct BOXES_TO_SKIP [number]
@@ -84,7 +87,7 @@ rule process_only_first_level_boxes
     % +empty
 
   construct __PROCESSED__ [repeat box]
-    __SINGLE_BOX_ARRAY__ [process_box_filter __RED_BOX__]
+    __SINGLE_BOX_ARRAY__ [process_box]
 
   construct _ [repeat box]
     __PROCESSED__ [red_box_counter] % последовательное выполнение
@@ -92,18 +95,6 @@ rule process_only_first_level_boxes
   by
     __PROCESSED__ [. __TAIL__]
 end rule
-
-
-function process_box_filter Box [red]
-  replace [repeat box]
-    __DATA__ [repeat box]
-
-  where
-    Box [do_nothing]    % проверки/фильтрация
-
-  by
-    __DATA__ [process_box]
-end function
 
 
 rule red_box_counter
@@ -143,8 +134,8 @@ function process_box
     __ORIGIN__ [box]
   by
     '#
-    '[ added BEFORE ']
+    '[ BEFORE first ']
     __ORIGIN__
-    '[ added AFTER ']
+    '[ AFTER first ']
     '#
 end function
