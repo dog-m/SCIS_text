@@ -1274,9 +1274,9 @@
 %%% From File: toc.dtx
 
 \def\@postskip{\texorpdfstring{\hskip1em}{  }}
-\newcommand\@pnumwidth{1.55em}
-\newcommand\@tocrmarg{2.55em}
-\newcommand\@dotsep{4.5}
+\renewcommand\@pnumwidth{1.55em}
+\renewcommand\@tocrmarg{2.55em}
+\renewcommand\@dotsep{4.5}
 \def\tocfill#1{%
   \leaders\hbox{$\m@th\mkern\@dotsep mu\hbox{#1}\mkern\@dotsep mu$}%
 }
