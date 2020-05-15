@@ -71,5 +71,5 @@ epstopdf:
 	@$(MAKE) -C fig $@
 
 clean:
-	del /q $(CLFILES)
+	rm -r $(CLFILES)
 	@$(MAKE) -C fig $@
