@@ -5,20 +5,14 @@
 Программная реализация.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Средства разработки}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-Текст
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Синтез цепочек функций}
+\section{Синтез цепочек TXL функций}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 Поскольку язык, который использует утилита TXL принадлежит к семейству функциональных языков программирования, это ограничение заставляет передавать собираемую информацию посредством параметров, с которыми вызываются последующие функции в цепочке.
 
 ***
 
-Цепочки вызываются из функции `main`.
+Цепочки вызываются из функции `main'.
 
 ***
 
@@ -30,39 +24,207 @@
   \item I-функции -- функции инструментирования.
 \end{enumerate}
 
-Кроме этого необходимо существование:
+Кроме этого необходимы следующие вспомогательные TXL функции:
 \begin{itemize}
   \item G-функции -- функции получения узлов, содержащих полезные значения (так называемых ''точек интереса''), из промежуточных узлов дерева разбора, имеющих TXL тип, который описывает какую-либо важную синтаксическую конструкцию целевого языка программирования.
   \item H-функции -- функции проверки принадлежности определенному контексту по передаваемым параметрам.
+  \item W-функции -- функции-обертки стандартных операторов сравнения и поиска, выполняемых над текстовыми данными.
 \end{itemize}
+
+***
 
 %%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Функции сбора информации}
 %%%%%%%%%%%%%%%%%%%%%%%
 
 ***
-C-функции -- функции сбора информации.
+
+C-функции -- это TXL функции, предназначенные для сбора информации (узлов древа разбора), которая используется для определения, соответствует-ли рассматриваемый/обрабатываемый узел дерева разбора выбранному контексту инструментирования.
+
+Ниже приведен пример C-функции:
+\begin{lstlisting}[frame=single, language=TXL]
+rule CollectorFuncB kw_Class [class_declaration]
+  skipping [method_declaration]
+  replace $ [method_declaration]
+    __NODE__ [method_declaration]
+  by
+    __NODE__
+      [CollectorFuncC kw_Class __NODE__]
+end rule
+\end{lstlisting}
+
+***
 
 %%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Функция фильтрации}
+\subsection{Функции фильтрации по контексту}
 %%%%%%%%%%%%%%%%%%%%%%%
 
 ***
-F-функции -- функции фильтрации.
+
+F-функции -- это TXL функции, предназначенные для фильтрации.
+
+Ниже приведен пример F-функции:
+\begin{lstlisting}[language=TXL]
+function filteringFunction
+    kw_Class [class_declaration] kw_Method [class_declaration]
+  skipping [method_declaration]
+  replace $ [method_declaration]
+    __NODE__ [method_declaration]
+  construct __VOID__ [any]
+    % void
+  where
+    __VOID__ [belongs_to_class_and_method kw_Class kw_Method]
+  by
+    __NODE__
+      [refinerFunction kw_Class kw_Method]
+end function
+\end{lstlisting}
+
+***
 
 %%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Функции уточнения контекста}
 %%%%%%%%%%%%%%%%%%%%%%%
 
-После проверки контекста функцией-фильтром, производится вызов первой функции из последовательности R-функций -- функций уточнения контекста.
+После проверки контекста функцией-фильтром, производится вызов первой функции из последовательности R-функций.
+
+R-функции -- это TXL функции, предназначенные для ...
+
+Ниже приведен пример R-функции:
+\begin{lstlisting}[frame=single, language=TXL]
+function refinerFunction kw_Class [class_declaration] kw_Method [class_declaration]
+  skipping ???
+  replace * [repeat declaration_or_statement]
+    __NODE__ [if_statement] __TAIL__ [repeat declaration_or_statement]
+  construct __SINGLE_BOX_ARRAY__ [repeat declaration_or_statement]
+    __NODE__ % +empty
+  construct __PROCESSED__ [repeat declaration_or_statement]
+    __SINGLE_BOX_ARRAY__ [instrumentationFunction kw_Class kw_Method]
+  by
+    __PROCESSED__ [. __TAIL__]
+end function
+\end{lstlisting}
+
 ***
 
 %%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Функция инструментирования}
+\subsection{Функции инструментирования}
 %%%%%%%%%%%%%%%%%%%%%%%
 
 ***
-I-функции -- функции инструментирования.
+
+I-функции -- это TXL функции, предназначенные для...
+
+Ниже приведен пример I-функции:
+\begin{lstlisting}[frame=single, language=TXL]
+function instrumentationFunction kw_Class [class_declaration] kw_Method [class_declaration]
+  replace [class_or_interface_body]
+    __NODE__ [class_or_interface_body]
+  deconstruct __NODE__
+    '{ RepeatClassBodyDeclaration [repeat class_body_declaration] '} OptLiteral [opt ';]
+  construct FILE [stringlit]
+    _ [+ "*dir/test.java*"]
+  construct POINTCUT [id]
+    'all
+  construct NODE [id]
+    _ [typeof __NODE__]
+  construct msg [stringlit]
+    _  [quote POINTCUT] [+ " "] [quote NODE] [+ " block in "] [quote FILE] [+ " class, in "] [quote METHOD_NAME] [+ " method"]
+  by
+    'iLogger.log(Level.FINE, msg ');
+    'if '( Condition ') '{ Statement '} OptElseClause
+end function
+\end{lstlisting}
+
+***
+
+%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Вспомогательные TXL функции}
+%%%%%%%%%%%%%%%%%%%%%%%
+
+***
+
+%%%%%%%%%%%
+\subsubsection{H-функции}
+%%%%%%%%%%%
+
+***
+
+Ниже приведен пример H-функций:
+\begin{lstlisting}[frame=single, language=TXL]
+function __belongs_to_context___namespace_m kw_Method [procedure_impl_decl]
+	match [any]
+		_ [any]
+	construct __VOID__ [any]
+		% void
+	construct POI_METHOD_NAMESPACE_str [stringlit]
+		_ [__POI_get___POI_METHOD_NAMESPACE kw_Method]
+	where
+		__VOID__ [__std__equal POI_METHOD_NAMESPACE_str "Main."]
+end function
+
+
+function __not__belongs_to_context___namespace_m kw_Method [procedure_impl_decl]
+	match [any]
+		_ [any]
+	construct __VOID__ [any]
+		% void
+	where not
+		__VOID__ [__belongs_to_context___namespace_m kw_Method]
+end function
+\end{lstlisting}
+
+***
+
+%%%%%%%%%%%
+\subsubsection{G-функции}
+%%%%%%%%%%%
+
+***
+
+Ниже приведен пример G-функции:
+\begin{lstlisting}[frame=single, language=TXL]
+function __POI_get___POI_METHOD_NAME_FULL kw_Method [procedure_impl_decl]
+	replace [stringlit]
+		_ [stringlit]
+	deconstruct kw_Method
+		    ProcedureIntfDecl0 [procedure_intf_decl] _ [nested_decl_block] _ [procedure_body_semi]
+	deconstruct ProcedureIntfDecl0
+		    ProcedureSignature1 [procedure_signature] _ [repeat semi_directive] _ [opt ';]
+	deconstruct ProcedureSignature1
+		    _ [opt 'class] _ [procedure_keyword] ProcedureId2 [opt procedure_id] _ [opt formal_parameters] _ [opt colon_type]
+	construct ProcedureId2_str [stringlit]
+		_ [quote ProcedureId2]
+	by
+		ProcedureId2_str
+end function
+\end{lstlisting}
+
+***
+
+%%%%%%%%%%%
+\subsubsection{W-функции}
+%%%%%%%%%%%
+
+***
+
+Ниже приведен пример W-функции:
+\begin{lstlisting}[frame=single, language=TXL]
+function __std__lower_equal A [stringlit] B [stringlit]
+	match [any]
+		_ [any]
+	where
+		A [<= B]
+end function
+\end{lstlisting}
+
+***
+
+%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{???}
+%%%%%%%%%%%%%%%%%%%%%%%
+
+***
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Выводы}
