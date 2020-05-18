@@ -80,6 +80,8 @@
 ***
 про язык
 
+Декларативный язык.
+
 На рис.~\ref{fig:layout_ruleset} приведен пример описания правил инструментирования с точки зрения конечного пользователя системы.
 
 \begin{figure}[!h]
@@ -110,6 +112,174 @@
 про XML
 
 * Было бы удобно видеть в одном месте упрощенную схему иерархии типов узлов дерева разбора, в которой отображены только наиболее важные понятия языка программирования, для которого выполняется инструментирование, такие как \textit{класс}, \textit{метод}, \textit{оператор ветвления}, \textit{цикл со счетчиком} и др.
+
+***
+
+\begin{lstlisting}[frame=single, language=XML, label={annotation-dag-example}, caption={Пример}]
+<!-- default pipeline: txl "%SRC%" "%TRANSFORM%" -o "%DST%" %PARAMS% -->
+<annotation
+  pipeline='txl "%SRC%" "%WORKDIR%\example\lang\python\pyindent.txl" | txl stdin "%TRANSFORM%" -o "%DST%" %PARAMS%'
+  >
+    <grammar
+      language="python"
+      src="lang\python\grammar.txl"
+      >
+        <keyword-DAG>
+            <imports type="repeat statement_or_newline"/>
+            <class type="classdef">
+                <body type="statement_or_newline">
+                    <method type="funcdef">
+                        <if type="if_statement">
+                            <elif type="elif_clause"/>
+                            <else type="else_clause"/>
+                        </if>
+                        <for type="for_statement"/>
+                        <while type="while_statement"/>
+                        ...
+                    </method>
+                </body>
+            </class>
+        </keyword-DAG>
+    </grammar>
+...
+\end{lstlisting}
+
+***
+
+\begin{lstlisting}[frame=single, language=XML, label={annotation-pois-example}, caption={Пример}]
+<points-of-interest>
+    <point
+      id="class_name"
+      keyword="class"
+      value-of="classdef_head:id"
+      />
+
+    <point
+      id="method_name"
+      keyword="method"
+      value-of="id"
+      />
+
+    <point
+      id="if_condition"
+      keyword="if"
+      value-of="condition"
+      />
+...
+\end{lstlisting}
+
+***
+
+\begin{lstlisting}[frame=single, language=XML, label={annotation-pointcuts-example}, caption={Пример}]
+<pointcuts>
+    <keyword
+      name="method"
+      search-type="funcdef"
+      sequential="false"
+      >
+        <templates>
+            <template kind="replace">
+                'def <!--id--> <!--parameters--> ': 'INDENT <!--newline-->
+                    <p name="before_body"/>
+                    <!--repeat statement_or_newline-->
+                    <p name="after_body"/>
+                'DEDENT
+            </template>
+
+            <template kind="match">
+                'def <!--id--> <!--parameters--> ': 'INDENT <!--newline-->
+                    <!--repeat statement_or_newline-->
+                'DEDENT
+            </template>
+        </templates>
+        <pointcuts>
+            <pointcut name="before_body" clone="if::before_body"/>
+
+            <pointcut name="after_body">
+                <paste-algorithm>
+                    <fragment-to-variable
+                      name="Additions"
+                      type="repeat statement_or_newline"
+                      each-line-postfix="Newline"
+                      />
+                    <insert-call
+                      function="."
+                      params="Additions"
+                      />
+                </paste-algorithm>
+            </pointcut>
+        </pointcuts>
+    </keyword>
+...
+\end{lstlisting}
+
+***
+
+\begin{lstlisting}[frame=single, language=XML, label={annotation-template-example}, caption={Пример}]
+<template kind="replace">
+    'def <!--id--> <!--parameters--> ': 'INDENT <!--newline-->
+        <p name="before_body"/>
+        <!--repeat statement_or_newline-->
+        <p name="after_body"/>
+    'DEDENT
+</template>
+\end{lstlisting}
+
+***
+
+\begin{lstlisting}[frame=single, language=XML, label={annotation-algo-example}, caption={Пример}]
+<pointcut name="before_body" clone="if::before_body"/>
+
+<pointcut name="after_body">
+    <paste-algorithm>
+        <fragment-to-variable
+          name="Additions"
+          type="repeat statement_or_newline"
+          each-line-postfix="Newline"
+          />
+        <insert-call
+          function="."
+          params="Additions"
+          />
+    </paste-algorithm>
+</pointcut>
+\end{lstlisting}
+
+***
+
+\begin{itemize}
+  \item insert-text -- text
+  \item insert-call -- function, params
+  \item insert-fragment -- [each-line-prefix], [each-line-postfix]
+  \item create-variable -- [name], type, value
+  \item deconstruct-variable -- type, variant
+  \item fragment-to-variable -- name, type, [each-line-prefix], [each-line-postfix]
+\end{itemize}
+
+***
+
+\begin{lstlisting}[frame=single, language=XML, label={annotation-lib-example}, caption={Пример}]
+<lib>
+  <function
+    name="addToImportsIfNotExists"
+    apply="call"
+    params="Addition:import_declaration"
+    >
+      <source>
+        replace [repeat import_declaration]
+          Imports [repeat import_declaration]
+
+        deconstruct not * [import_declaration] Imports
+          Addition
+
+        by
+          Imports [^ Addition]
+      </source>
+  </function>
+...
+\end{lstlisting}
+
+***
 
 %%%%%%%%%%%%%%%%%%%
 \subsection{Фрагменты программного кода}
