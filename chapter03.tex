@@ -4,6 +4,26 @@
 
 Креатив.
 
+Проблема представления деревьев в виде
+множеств
+Или сопоставления деревьев и множеств
+правила грамматики могут описывать бесконечные деревья
+
+
+рассмотрим пример
+
+пусть $A$, $B$, $C$, $D$ -- ***
+
+какие есть способы описания ограничений в TXL
+один из них -- КНФ
+
+исходя из этого
+$A * B + C * D$
+переходит в
+$(A + C) * (A + D) * (B + C) * (B + D)$
+
+но теперь необходимо распределить эти ограничения по функциям в соответствии с узлами из дерева рабора, которые содержат значения, которые нужно проверить
+
 %%%%%%%%%%%%%%%%%%%
 \section{Подходы к проблеме}
 %%%%%%%%%%%%%%%%%%%
@@ -244,17 +264,6 @@
     </paste-algorithm>
 </pointcut>
 \end{lstlisting}
-
-***
-
-\begin{itemize}
-  \item insert-text -- text
-  \item insert-call -- function, params
-  \item insert-fragment -- [each-line-prefix], [each-line-postfix]
-  \item create-variable -- [name], type, value
-  \item deconstruct-variable -- type, variant
-  \item fragment-to-variable -- name, type, [each-line-prefix], [each-line-postfix]
-\end{itemize}
 
 ***
 
