@@ -1,5 +1,5 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\chapter{Реализация}
+\chapter{Реализация генератора систем инструментирования}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 Программная реализация.
@@ -46,7 +46,7 @@ struct CallChainElement {
 ***
 
 Ниже представлена общая структура цепочки вызовов программно-синтезируемых предметно-ориентированных функций:
-\begin{enumerate}
+\begin{enumerate}[noitemsep]
   \item C-функции -- функции сбора информации.
   \item F-функции -- функции фильтрации.
   \item R-функций -- функций уточнения контекста.
@@ -87,9 +87,9 @@ end rule
 \end{lstlisting}
 
 Стоит отметить, что существуют разные подходы к решению задачи передачи информации по цепочке функций:
-\begin {itemize}
+\begin {itemize}[noitemsep]
   \item аргументы функций
-    \begin{itemize}
+    \begin{itemize}[noitemsep]
       \item добавление новых аргументов в конец (слева-направо)
       \item добавление новых аргументов в начало (справа-налево)
     \end{itemize}
@@ -139,7 +139,6 @@ R-функции (англ. $refine$) -- это TXL функции, специа
 
 \begin{lstlisting}[frame=single, language=TXL, label={rfunc-example}, caption={Пример R-функции}]
 function refinerFunction kw_Class [class_declaration] kw_Method [class_declaration]
-  skipping ???
   replace * [repeat declaration_or_statement]
     __NODE__ [if_statement] __TAIL__ [repeat declaration_or_statement]
   construct __SINGLE_BOX_ARRAY__ [repeat declaration_or_statement]
@@ -285,15 +284,15 @@ end function
 
 ***
 
-Команды, доступные пользователю при описании алгоритма инструментирования в секции $algorithm$ аннотации грамматики.
+Команды, доступные пользователю (составителю аннотации) при описании алгоритма инструментирования в секции $algorithm$ аннотации грамматики.
 
-\begin{itemize}
-  \item $insert-text (text)$ -- 11
-  \item $insert-call (function, params)$ -- 22
-  \item $insert-fragment ([each-line-prefix], [each-line-postfix])$ -- 33
-  \item $create-variable ([name], type, value$ -- 44
-  \item $deconstruct-variable (type, variant)$ -- 55
-  \item $fragment-to-variable (name, type, [each-line-prefix], [each-line-postfix])$ -- 66
+\begin{itemize}[noitemsep]
+  \item \lstinline{insert-text (text)} -- вставка текста, заданного в параметре $text$, без экранирования в точке инструментирования, а именно, в выражении секции $by$ синтезируемой функции инструментирования (I-функции).
+  \item \lstinline{insert-call (function, params)} -- вставка вызова функции с именем $function$ с параметрами $params$, разделенными символом пробела. Параметры будут вставлены как есть, что позволяет использовать ключевое слово $each$ языка TXL для работы с последовательностями (массивами и списками).
+  \item \lstinline{insert-fragment ([each-line-prefix], [each-line-postfix])} -- вставка текста фрагмента в точке инструментирования. Для каждой строки текста фрагмента опционально может быть задан некоторый текст, добавляемый в начало \textit{each-line-prefix} и в конец \textit{each-line-postfix}.
+  \item \lstinline{create-variable ([name], type, value)} -- создание TXL переменной с типом $type$, значение которой задано текстом параметра $value$. Имя переменной будет сгенерировано автоматически из названия используемого типа, но также может быть указано вручную, используя параметр $name$.
+  \item \lstinline{deconstruct-variable (type, variant)} -- добавление в функцию инструментирования (I-функцию) конструкции TXL для декомпозиции переменной с типом $type$ в соответствии с грамматикой целевого языка программирования, используя вариант с номером $variant$, если TXL тип многозначен.
+  \item \lstinline{fragment-to-variable (name, type, [each-line-prefix], [each-line-postfix])} -- создание TXL переменной в теле I-функции с типом $type$ и именем $name$, которая содержит в себе текст добавляемого фрагмента программного кода. Как и функция \textit{insert-fragment}, команда позволяет для каждой строки добавляемого текста опционально задать ``префикс'' и ``суфикс''.
 \end{itemize}
 
 ***
