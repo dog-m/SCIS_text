@@ -1,8 +1,275 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\chapter{Реализация генератора систем инструментирования}
+\chapter{Реализация генератора}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 Программная реализация.
+
+***
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Работа системы инструментирования}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+***
+
+%%%%%%%%%%%%%%%%%%%
+\subsection{Правила инструментирования}
+%%%%%%%%%%%%%%%%%%%
+
+***
+про язык
+
+На рис.~\ref{fig:layout-ruleset} приведен пример декларативного описания пользовательских правил инструментирования с точки зрения конечного пользователя системы.
+
+\begin{figure}[!h]
+	\centering
+	\includegraphics[width=4.2in]{layout_ruleset}
+	\caption{Пример описания правил инструментирования}
+	\label{fig:layout-ruleset}
+\end{figure}
+
+Основными частями пользовательского описания набора правил являются (номер пункта списка соответствует номеру на рис.~\ref{fig:layout_ruleset}):
+\begin{enumerate}[noitemsep]
+  \item перечисление используемых в данном наборе правил фрагментов исходных текстов и их относительное расположение в файловой системе;
+  \item перечисление интересующих пользователя контекстов инструментирования;
+  \item группировка этапов инструментирования в виде именованых правил;
+  \item уточнение контекста инструментирования с применением ключевых слов языка программирования и текстовых шаблонов, если таковые требуются для целей уточнения контекста согласно решаемой пользователем задачи;
+  \item указание одной конкретной точки инструментирования по ее идентификатору;
+  \item создание пользовательских переменных из текстовых элементов и значений констант;
+  \item список имен фрагментов, вставку которых необходимо выполнить одновременно в одном и том же месте, с указанием параметров, если таковые требуются согласно тексту используемого фрагмента.
+\end{enumerate}
+
+***
+
+%%%%%%%%%%%%%%%%%%%
+\subsection{Аннотация грамматики языка}
+%%%%%%%%%%%%%%%%%%%
+
+***
+про XML
+
+***
+
+\begin{lstlisting}[frame=single, language=XML, label={annotation-dag-example}, caption={Пример}]
+<!-- default pipeline: txl "%SRC%" "%TRANSFORM%" -o "%DST%" %PARAMS% -->
+<annotation
+  pipeline='txl "%SRC%" "%ANNOTATION_DIR%/pyindent.txl" | txl stdin "%TRANSFORM%" -o "%DST%" %PARAMS%'
+  >
+    <grammar
+      language="python"
+      src="/grammar.txl"
+      >
+        <keyword-DAG>
+            <imports type="repeat statement_or_newline"/>
+            <class type="classdef">
+                <body type="statement_or_newline">
+                    <method type="funcdef">
+                        <if type="if_statement">
+                            <elif type="elif_clause"/>
+                            <else type="else_clause"/>
+                        </if>
+                        <for type="for_statement"/>
+                        <while type="while_statement"/>
+                        ...
+                    </method>
+                </body>
+            </class>
+        </keyword-DAG>
+    </grammar>
+...
+\end{lstlisting}
+
+Были реализованы следующие метки-заполнители (placeholder):
+
+\begin{itemize}[noitemsep]
+  \item \textit{WORKING\_DIR}   -- путь к рабочей директории процесса генератора систем инструментирования.
+  \item \textit{ANNOTATON\_DIR} -- путь к директории, которая содержит файл аннотации грамматики целевого языка программирования.
+  \item \textit{SRC}            -- путь к исходному файлу с текстом на целевом языке программирования; инструментируемый текст программного обеспечения.
+  \item \textit{DST}            -- путь к обработанному файлу с текстом на целевом языке программирования; инструментированный текст программного обеспечения.
+  \item \textit{TRANSFORM}      -- путь к файлу с описанием на языке TXL синтезированных трансформаций предоставленного исходного текста программы.
+  \item \textit{PARAMS}         -- дополнительные параметры для утилиты TXL; всегда включает ***.
+\end{itemize}
+
+***
+
+\begin{lstlisting}[frame=single, language=XML, label={annotation-pois-example}, caption={Пример}]
+<points-of-interest>
+    <point
+      id="class_name"
+      keyword="class"
+      value-of="classdef_head:id"
+      />
+
+    <point
+      id="method_name"
+      keyword="method"
+      value-of="id"
+      />
+
+    <point
+      id="if_condition"
+      keyword="if"
+      value-of="condition"
+      />
+...
+\end{lstlisting}
+
+* к прмеру, точка интереса с именем \textit{class\_name} преобразовывается в TXL функцию, исходный текст которой представлен в листинге~\ref{poi-src-example}.
+
+\begin{lstlisting}[frame=single, language=TXL, label={poi-src-example}, caption={Пример синтезированной функции для точки интереса \textit{class\_name}}]
+function __POI_get___POI_CLASS_NAME kw_Class [class_declaration]
+	replace [stringlit]
+		_ [stringlit]
+	deconstruct kw_Class
+    ClassHeader0 [class_header] _ [class_body]
+	deconstruct ClassHeader0
+    _ [repeat modifier] 'class ClassName1 [class_name] _ [opt extends_clause] _ [opt implements_clause]
+	construct ClassName1_str [stringlit]
+		_ [quote ClassName1]
+	by
+		ClassName1_str
+end function
+\end{lstlisting}
+
+***
+
+\begin{lstlisting}[frame=single, language=XML, label={annotation-pointcuts-example}, caption={Пример}]
+<pointcuts>
+  <keyword
+    name="method"
+    search-type="funcdef"
+    sequential="false"
+    >
+    <templates>
+      <template kind="replace">
+        'def <!--id--> <!--parameters--> ': 'INDENT <!--newline-->
+          <p name="before_body"/>
+          <!--repeat statement_or_newline-->
+          <p name="after_body"/>
+        'DEDENT
+      </template>
+
+      <template kind="match">
+        'def <!--id--> <!--parameters--> ': 'INDENT <!--newline-->
+          <!--repeat statement_or_newline-->
+        'DEDENT
+      </template>
+    </templates>
+    <pointcuts>
+      <pointcut name="before_body" clone="if::before_body"/>
+
+      <pointcut name="after_body">
+        <paste-algorithm>
+          <fragment-to-variable
+            name="Additions"
+            type="repeat statement_or_newline"
+            each-line-postfix="Newline"
+            />
+          <insert-call
+            function="."
+            params="Additions"
+            />
+        </paste-algorithm>
+      </pointcut>
+    </pointcuts>
+  </keyword>
+...
+\end{lstlisting}
+
+***
+
+\begin{lstlisting}[frame=single, language=XML, label={annotation-template-example}, caption={Пример}]
+<template kind="replace">
+    'def <!--id--> <!--parameters--> ': 'INDENT <!--newline-->
+        <p name="before_body"/>
+        <!--repeat statement_or_newline-->
+        <p name="after_body"/>
+    'DEDENT
+</template>
+\end{lstlisting}
+
+***
+
+\begin{lstlisting}[frame=single, language=XML, label={annotation-algo-example}, caption={Пример}]
+<pointcut name="before_body" clone="if::before_body"/>
+
+<pointcut name="after_body">
+    <paste-algorithm>
+        <fragment-to-variable
+          name="Additions"
+          type="repeat statement_or_newline"
+          each-line-postfix="Newline"
+          />
+        <insert-call
+          function="."
+          params="Additions"
+          />
+    </paste-algorithm>
+</pointcut>
+\end{lstlisting}
+
+***
+
+\begin{lstlisting}[frame=single, language=XML, label={annotation-lib-example}, caption={Пример}]
+<lib>
+  <function
+    name="addToImportsIfNotExists"
+    apply="call"
+    params="Addition:import_declaration"
+    >
+      <source>
+        replace [repeat import_declaration]
+          Imports [repeat import_declaration]
+
+        deconstruct not * [import_declaration] Imports
+          Addition
+
+        by
+          Imports [^ Addition]
+      </source>
+  </function>
+...
+\end{lstlisting}
+
+***
+
+%%%%%%%%%%%%%%%%%%%
+\subsection{Фрагменты программного кода}
+%%%%%%%%%%%%%%%%%%%
+
+***
+про XML
+
+В листинге~\ref{fragment-example} приведен пример пользовательского параметризованного фрагмента программного кода на некотором целевом языке программирования (в данном случае -- Java).
+
+\begin{lstlisting}[frame=single, language=XML, label={fragment-example}, caption={Пример пользовательского фрагмента}]
+<fragment language="java" name="logging_message">
+  <dependencies>
+    <required name="logging_imports"/>
+    <required name="logging_fields"/>
+  </dependencies>
+
+  <code black-list="imports" params="message">
+    iLogger.log(Level.FINE, <p id="message"/>);
+  </code>
+</fragment>
+\end{lstlisting}
+
+***
+
+%%%%%%%%%%%%%%%%%%%
+\subsection{Выходные артефакты генератора}
+%%%%%%%%%%%%%%%%%%%
+
+***
+про кэш и откат/копирование при ошибках
+
+
 
 ***
 
