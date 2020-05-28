@@ -1,8 +1,11 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\chapter{Реализация генератора}
+\chapter{Реализация генератора систем инструментирования}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 Программная реализация.
+
+*** Средства разработки
+C++, Boost library, argparse, tinyxml2
 
 ***
 
@@ -19,7 +22,7 @@
 ***
 про язык
 
-На рис.~\ref{fig:layout-ruleset} приведен пример декларативного описания пользовательских правил инструментирования с точки зрения конечного пользователя системы.
+На рисунке~\ref{fig:layout-ruleset} приведен пример декларативного описания пользовательских правил инструментирования с точки зрения конечного пользователя системы.
 
 \begin{figure}[!h]
 	\centering
@@ -57,27 +60,27 @@
 <annotation
   pipeline='txl "%SRC%" "%ANNOTATION_DIR%/pyindent.txl" | txl stdin "%TRANSFORM%" -o "%DST%" %PARAMS%'
   >
-    <grammar
-      language="python"
-      src="/grammar.txl"
-      >
-        <keyword-DAG>
-            <imports type="repeat statement_or_newline"/>
-            <class type="classdef">
-                <body type="statement_or_newline">
-                    <method type="funcdef">
-                        <if type="if_statement">
-                            <elif type="elif_clause"/>
-                            <else type="else_clause"/>
-                        </if>
-                        <for type="for_statement"/>
-                        <while type="while_statement"/>
-                        ...
-                    </method>
-                </body>
-            </class>
-        </keyword-DAG>
-    </grammar>
+  <grammar
+    language="python"
+    src="/grammar.txl"
+    >
+    <keyword-DAG>
+      <imports type="repeat statement_or_newline"/>
+      <class type="classdef">
+        <body type="statement_or_newline">
+          <method type="funcdef">
+            <if type="if_statement">
+              <elif type="elif_clause"/>
+              <else type="else_clause"/>
+            </if>
+            <for type="for_statement"/>
+            <while type="while_statement"/>
+            ...
+          </method>
+        </body>
+      </class>
+    </keyword-DAG>
+  </grammar>
 ...
 \end{lstlisting}
 
@@ -107,23 +110,23 @@
 
 \begin{lstlisting}[frame=single, language=XML, label={annotation-pois-example}, caption={Пример}]
 <points-of-interest>
-    <point
-      id="class_name"
-      keyword="class"
-      value-of="classdef_head:id"
-      />
+  <point
+    id="class_name"
+    keyword="class"
+    value-of="classdef_head:id"
+    />
 
-    <point
-      id="method_name"
-      keyword="method"
-      value-of="id"
-      />
+  <point
+    id="method_name"
+    keyword="method"
+    value-of="id"
+    />
 
-    <point
-      id="if_condition"
-      keyword="if"
-      value-of="condition"
-      />
+  <point
+    id="if_condition"
+    keyword="if"
+    value-of="condition"
+    />
 ...
 \end{lstlisting}
 
@@ -220,6 +223,30 @@ end function
     </paste-algorithm>
 </pointcut>
 \end{lstlisting}
+
+***
+
+Команды, доступные пользователю (составителю аннотации) при описании алгоритма инструментирования в секции $algorithm$ аннотации грамматики.
+
+\begin{itemize}[noitemsep]
+  \item \lstinline{insert-text (text)} --
+  вставка текста, заданного в параметре $text$, без экранирования в точке инструментирования, а именно, в выражении секции $by$ синтезируемой функции инструментирования (I-функции).
+
+  \item \lstinline{insert-call (function, params)} --
+  вставка вызова функции с именем $function$ с параметрами $params$, разделенными символом пробела. Параметры будут вставлены как есть, что позволяет использовать ключевое слово $each$ языка TXL для работы с последовательностями (массивами и списками).
+
+  \item \lstinline{insert-fragment ([each-line-prefix], [each-line-postfix])} --
+  вставка текста фрагмента в точке инструментирования. Для каждой строки текста фрагмента опционально может быть задан некоторый текст, добавляемый в начало \textit{each-line-prefix} и в конец \textit{each-line-postfix}.
+
+  \item \lstinline{create-variable ([name], type, value)} --
+  создание TXL переменной с типом $type$, значение которой задано текстом параметра $value$. Имя переменной будет сгенерировано автоматически из названия используемого типа, но также может быть указано вручную, используя параметр $name$.
+
+  \item \lstinline{deconstruct-variable (type, variant)} --
+  добавление в функцию инструментирования (I-функцию) конструкции TXL для декомпозиции переменной с типом $type$ в соответствии с грамматикой целевого языка программирования, используя вариант с номером $variant$, если TXL тип многозначен.
+
+  \item \lstinline{fragment-to-variable (name, type, [each-line-prefix], [each-line-postfix])} --
+  создание TXL переменной в теле I-функции с типом $type$ и именем $name$, которая содержит в себе текст добавляемого фрагмента программного кода. Как и функция \textit{insert-fragment}, команда позволяет для каждой строки добавляемого текста опционально задать ``префикс'' и ``суфикс''.
+\end{itemize}
 
 ***
 
@@ -624,36 +651,7 @@ end function
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 ***
-
-Команды, доступные пользователю (составителю аннотации) при описании алгоритма инструментирования в секции $algorithm$ аннотации грамматики.
-
-\begin{itemize}[noitemsep]
-  \item \lstinline{insert-text (text)} --
-  вставка текста, заданного в параметре $text$, без экранирования в точке инструментирования, а именно, в выражении секции $by$ синтезируемой функции инструментирования (I-функции).
-
-  \item \lstinline{insert-call (function, params)} --
-  вставка вызова функции с именем $function$ с параметрами $params$, разделенными символом пробела. Параметры будут вставлены как есть, что позволяет использовать ключевое слово $each$ языка TXL для работы с последовательностями (массивами и списками).
-
-  \item \lstinline{insert-fragment ([each-line-prefix], [each-line-postfix])} --
-  вставка текста фрагмента в точке инструментирования. Для каждой строки текста фрагмента опционально может быть задан некоторый текст, добавляемый в начало \textit{each-line-prefix} и в конец \textit{each-line-postfix}.
-
-  \item \lstinline{create-variable ([name], type, value)} --
-  создание TXL переменной с типом $type$, значение которой задано текстом параметра $value$. Имя переменной будет сгенерировано автоматически из названия используемого типа, но также может быть указано вручную, используя параметр $name$.
-
-  \item \lstinline{deconstruct-variable (type, variant)} --
-  добавление в функцию инструментирования (I-функцию) конструкции TXL для декомпозиции переменной с типом $type$ в соответствии с грамматикой целевого языка программирования, используя вариант с номером $variant$, если TXL тип многозначен.
-
-  \item \lstinline{fragment-to-variable (name, type, [each-line-prefix], [each-line-postfix])} --
-  создание TXL переменной в теле I-функции с типом $type$ и именем $name$, которая содержит в себе текст добавляемого фрагмента программного кода. Как и функция \textit{insert-fragment}, команда позволяет для каждой строки добавляемого текста опционально задать ``префикс'' и ``суфикс''.
-\end{itemize}
-
-***
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{???}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-***
+про кэширование
 
 \nomenclature{SHA-1}{Secure Hash Algorithm 1 -- 160-битный алгоритм криптографического хэширования}
 \nomenclature{MD5}{Message Digest 5 -- 128-битный алгоритм хэширования}
@@ -668,7 +666,7 @@ end function
 
 Для реализации интерфейса командной строки, а именно разбора параметров запуска исполнимого модуля, при реализации прототипа генератора систем инструментирования были использованы возможности библиотеки $argparse$ \cite{argparse}.
 
-\begin{itemize}
+\begin{itemize}[noitemsep]
   \item \lstinline{--src filenameI.lang}                -- путь к исходному файлу с текстом инструментируемого программного обеспечения, написаном на выбранном (целевом) языке программирования.
   \item \lstinline{--dst filenameO.lang}                -- путь к файлу, в котором будет сохранен инструментированный текст программы.
   \item \lstinline{--rule filename.dsl}                 -- путь к файлу, в котором описываются пользовательские правила инструметирования.
