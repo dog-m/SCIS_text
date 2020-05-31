@@ -3,31 +3,32 @@ use fragment "logging/fields"
 use fragment "logging/init"
 use fragment "logging/message"
 
-context namespace_m:
-  { poi:method_namespace matches "Main*" }
+context class:
+  { poi:method_namespace matches "TCompilerOpt*" }
 
-context method_m:
-  { poi:method_name matches "mai*" }
+context method:
+  { poi:method_name = "AddChoicesByOptOld" }
 
-context class_and_method_m:
-  namespace_m & method_m
+context class_and_method:
+  class & method
 
 rules:
-  print_usefull_message_to_the_log:
+  // ???
+  trace_call_of_AddChoices:
     @@ -> [first] imports # all:
       add:
         logging_dependencies
   
-    @@ -> [level] class("Main") # all:
+    @@ -> [level] class("TCompilerOpt") # before_body:
       add:
         logging_fields
   
-    @class_and_method_m -> [first] method # before_body:
+    @class -> [first] method("Create") # before_body:
       add:
         logging_init
   
-    @class_and_method_m -> [all] method -> [first] if("*<* 0") # before:
+    @class_and_method -> [first] method("AddChoices") -> [first] if # before:
       make:
-        msg <- $std:pointcut + " <" + $std:node + "> block in [" + $poi:method_name_full + "] method";
+        msg <- "<" + $std:pointcut + "> in {AddChoices} of [" + $poi:method_name_full + "] method";
       add:
         logging_message(msg)

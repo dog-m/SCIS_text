@@ -3,31 +3,25 @@ use fragment "logging/fields"
 use fragment "logging/init"
 use fragment "logging/message"
 
-context class_m:
-  { poi:class_name = "Main" }
+context target_class:
+  { poi:class_name exists }
 
-context method_m:
-  { poi:method_name matches "mai*" }
+context target_method:
+  { poi:method_name = "__init__" }
 
-context class_and_method_m:
-  class_m & method_m
+context target_class_and_method:
+  target_class & target_method
 
 rules:
+  // ???
   print_usefull_message_to_the_log:
     @@ -> [first] imports # all:
       add:
         logging_dependencies
-  
-    @class_m -> [level] body # all:
-      add:
-        logging_fields
-  
-    @class_and_method_m -> [first] method # before_body:
-      add:
-        logging_init
-  
-    @class_and_method_m -> [all] method -> [first] if("*< 0") # before:
+
+    @target_class_and_method -> [first] method # before_body:
       make:
-        msg <- $std:pointcut + " <" + $std:node + "> block in [" + $poi:class_name + "] class, in {" + $poi:method_name + "} method";
+        msg <- "In constructor of [" + $poi:class_name + "] class";
       add:
+        logging_init,
         logging_message(msg)
