@@ -8,11 +8,7 @@
 \section{Методика испытаний}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-***
-
 Методика испытаний разработанного прототипа генератора систем инструментирования заключается в ручном составлении пользовательских правил инструментирования и последующем применении этих правил к некоторому тексту программы при помощи системы инструментирования (генератора) с последующим анализом полученного инструментированного текста программы.
-
-***
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Программа испытаний}
@@ -87,7 +83,7 @@
   \item С++
 \end{itemize}
 
-В список были ключены языки Python и Object Pascal по причине применения отличного от "C-подобного" стиля оформления блоков кода: Python -- отступы, Object Pascal -- специальные ключевые слова "begin" и "end".
+В список были ключены языки Python и Object Pascal по причине применения отличного от <<C-подобного>> стиля оформления блоков кода: Python -- отступы, Object Pascal -- специальные ключевые слова <<begin>> и <<end>>.
 
 ***
 
@@ -115,7 +111,7 @@
 
 ***
 
-\begin{lstlisting}[frame=single, language=C, label={test-c}, caption={Исходный текст тестового приложения}]
+\begin{lstlisting}[frame=single, language=C, label={test-c}, caption={Исходный текст тестового приложения.}]
 #include <iostream>
 
 using namespace std;
@@ -168,7 +164,7 @@ int main() {
 
 ***
 
-\begin{lstlisting}[frame=single, language=Pascal, label={test-delphi}, caption={Исходный текст тестового приложения}]
+\begin{lstlisting}[frame=single, language=Pascal, label={test-delphi}, caption={Исходный текст тестового приложения.}]
 program test;
 
 uses
@@ -238,7 +234,7 @@ end.
 
 ***
 
-\begin{lstlisting}[frame=single, language=Java, label={test-java}, caption={Исходный текст тестового приложения}]
+\begin{lstlisting}[frame=single, language=Java, label={test-java}, caption={Исходный текст тестового приложения.}]
 package com.test;
 
 import java.util.logging.Level;
@@ -286,7 +282,7 @@ public class Main {
 
 ***
 
-\begin{lstlisting}[frame=single, language=Python, label={test-python}, caption={Исходный текст тестового приложения}]
+\begin{lstlisting}[frame=single, language=Python, label={test-python}, caption={Исходный текст тестового приложения.}]
 from logging import *
 
 class Main:
@@ -326,10 +322,6 @@ Main().main({})
 %%%%%%%%%%%%%%%%%%
 \subsection{Правила инструментирования}
 %%%%%%%%%%%%%%%%%%
-
-***
-
-Составлены правила инструментирования для языков со строгой поддержкой структурного программирования (Java, Python) и не строгой (Pascal, C/C++).
 
 ***
 
