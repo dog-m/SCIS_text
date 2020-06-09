@@ -2,7 +2,7 @@
 \chapter{Тестирование генератора систем инструментирования и анализ результатов}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-***
+В данном разделе производится тестирование разработанного прототипа генератора систем автоматизации инструментирования программ и оценка примененных подходов.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Методика испытаний}
@@ -114,19 +114,16 @@
 
 \begin{lstlisting}[frame=single, language=C, label={test-c}, caption={Исходный текст тестового приложения.}]
 #include <iostream>
-
 using namespace std;
 
 class Main {
-  int a = 10;
-  int b = 20;
+  int a = 10, b = 20;
 
   static void something_else() {
     if (a >= b) {
       if (a < 0)
         cout << "Fizz Buzz!" << endl;
     }
-
     if (a >= b) {
       if (a < 0)
         cout << "Fizz Buzz!" << endl;
@@ -141,7 +138,6 @@ void Main::main() {
     if (a < 0)
       cout << "Hello World!" << endl;
   }
-
   if (a >= b) {
     if (a < 0)
       cout << "Hello World!" << endl;
@@ -168,15 +164,13 @@ int main() {
 \begin{lstlisting}[frame=single, language=Pascal, label={test-delphi}, caption={Исходный текст тестового приложения.}]
 program test;
 
-uses
-  SysUtils;
+uses SysUtils;
 
 type
   Main = class
   public
     a: integer;
     b: integer;
-
     procedure something_else(args: array of string);
     procedure main(args: array of string);
   end;
@@ -188,7 +182,6 @@ begin
     if a < 0 then
       System.writeln('Fizz Buzz!');
   end;
-
   if a >= b then
   begin
     if a < 0 then
@@ -203,7 +196,6 @@ begin
     if a < 0 then
       System.writeln('Hello World!');
   end;
-
   if a >= b then
   begin
     if a < 0 then
@@ -217,7 +209,6 @@ begin
     a := 10;
     b := 20;
     main(['text']);
-
     Free;
   end;
 end.
@@ -250,7 +241,6 @@ public class Main {
       if (a < 0)
         System.out.println("Fizz Buzz!");
     }
-
     if (a >= b) {
       if (a < 0)
         System.out.println("Fizz Buzz!");
@@ -262,7 +252,6 @@ public class Main {
       if (a < 0)
         System.out.println("Hello World!");
     }
-
     if (a >= b) {
       if (a < 0)
         System.out.println("Hello World!");
@@ -295,7 +284,6 @@ class Main:
         if self.a >= self.b:
           if a < 0:
             print "Fizz Buzz!"
-
         if a >= b:
           if a < 0:
             print "Fizz Buzz!"
@@ -304,7 +292,6 @@ class Main:
         if self.a >= self.b:
           if self.a < 0:
             print "Hello World!"
-
         if self.a >= self.b:
           if self.a < 0:
             print "Hello World!"
@@ -326,13 +313,17 @@ Main().main({})
 
 ***
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Выводы}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%
+\subsection{Результаты инструментирования}
+%%%%%%%%%%%%%%%%%%
 
 ***
 
-Возможные улучшения:
+%%%%%%%%%%%%%%%%%%
+\subsection{Развитие прототипа}
+%%%%%%%%%%%%%%%%%%
+
+Ниже перечислены возможные улучшения, собранные из наблюдения за работой прототипа и замеченных при проектировании и разработке принципов его работы:
 
 \begin{itemize}[noitemsep]
   \item Использовать встроенный парсер языка TXL и описания пользовательских правил (например, на основе ANTLR~\cite{antlr}).
@@ -348,4 +339,12 @@ Main().main({})
   \item ***
 \end{itemize}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Выводы}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+В данном разделе был рассмотрен процесс и результаты тестирования разработанного прототипа генератора систем автоматизации инструментирования программ.
 ***
+Проведенные эксперименты на реальных и синтетических данных (исходных текстах программ) показали работоспособность подхода и инструмента.
+Были приведены замеченные в ходе тестирования недостатки и ограничения как прототипа, так и выбранного подхода, а также рассмотрены возможные способы дальнейшего развития данного прототипа.
+

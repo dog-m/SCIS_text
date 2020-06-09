@@ -620,6 +620,93 @@ end function
   \item \underline{level} -- поиск и обработка узлов, находящихся на \textit{одном уровне} (первом) вложенности таких узлов друг в друга.
 \end{itemize}
 
+Рассмотрим влияние различных модификаторов на поведение R-функций на примере небольшой программы на языке Python, исходный текст которой приведен в листинге~\ref{py-before-example-src}.
+Для этого опишем набор правил инструментирования, каждое правило которого позволит легко выявить используемый модификатор.
+Для этого воспользуемся реализованным в прототипе генератора идентификатором $std:rule$, который позволяет сохранить в пользовательской константе название текущего правила.
+Полный текст составленного описания приведен в листинге~\ref{py-rules-example}.
+
+\begin{lstlisting}[frame=single, label={py-rules-example}, caption={Применение различных модификаторов уточняющих функций в описании правил (форматирование изменено для компактности).}]
+use fragment "frag"
+
+rules:
+  mod_1_FIRST:
+    @@ -> [first] if # before:
+      make:  msg <- $std:rule;
+      add:   frag(msg)
+
+  mod_2_ALL:
+    @@ -> [all] if # before:
+      make:  msg <- $std:rule;
+      add:   frag(msg)
+
+  mod_3_LEVEL:
+    @@ -> [level] if # before:
+      make:  msg <- $std:rule;
+      add:   frag(msg)
+
+  multiplie_LEVELs:
+    @@ -> [level] if -> [level] if # before:
+      make:  msg <- $std:rule;
+      add:   frag(msg)
+\end{lstlisting}
+
+\begin{lstlisting}[frame=single, language=Python, label={py-before-example-src}, caption={Пример исходной программы на языке Python.}]
+def test():
+  if lvl == 11:
+    if lvl == 22:
+      if lvl == 33:
+        print "Hello World!"
+      
+      if lvl == 33:
+        print "Hello World!"
+    
+    if lvl == 22:
+      if lvl == 33:
+        print "Hello World!"
+      
+      if lvl == 33:
+        print "Hello World!"
+...
+\end{lstlisting}
+
+В листинге~\ref{py-after-example-src} приведен текст обработанной программы, текст которой был инструментирован в соответствии с описанными правилами.
+
+\begin{lstlisting}[frame=single, language=Python, label={py-after-example-src}, caption={Результат применения различных модификаторов к исходной программе.}]
+def test() :
+    print "mod_1_FIRST"
+    print "mod_2_ALL"
+    print "mod_3_LEVEL"
+    if lvl == 11 :
+        print "mod_2_ALL"
+        print "multiplie_LEVELs"
+        if lvl == 22 :
+            print "mod_2_ALL"
+            if lvl == 33 :
+                print "Hello World!"
+
+            print "mod_2_ALL"
+            if lvl == 33 :
+                print "Hello World!"
+
+        print "mod_2_ALL"
+        print "multiplie_LEVELs"
+        if lvl == 22 :
+            print "mod_2_ALL"
+            if lvl == 33 :
+                print "Hello World!"
+
+            print "mod_2_ALL"
+            if lvl == 33 :
+                print "Hello World!"
+...
+\end{lstlisting}
+
+Результат применения различных модификаторов наглядно демонстрирует успешное выполнение операции инструментирования для
+\textit{первой} синтаксической конструкции (вывод строки <<mod\_1\_FIRST>>),
+\textit{всех} синтаксических конструкций (вывод строки <<mod\_2\_ALL>>),
+синтаксических конструкций \textit{первого уровня} (вывод строки <<mod\_3\_LEVEL>>) и
+совместного использования \textit{нескольких уровней} синтаксической конструкции (вывод строки <<multiplie\_LEVELs>>).
+
 Перед кодированием каждого из перечисленных выше модификаторов R-функций необходимо было решить соответствующую смыслу данного модификатора задачу.
 
 Для реализации модификатора \textbf{first} достаточно было воспользоваться стандартной особенностью языка TXL, которая именуется <<searching-function>>~\cite{txl-book} или <<поисковая функция>>/<<функция поиска>>.
