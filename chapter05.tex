@@ -44,17 +44,15 @@
   \item Общий анализ полученных результатов и оценка возможностей по усовершенствованию разработанного прототипа.
 \end{enumerate}
 
-***
+Поиск и оценка изменений выполнялись как визуально, так и с помощью программных средств, таких как консольная <<diffutils>>~\cite{git} и графическая <<TortoiseGitMerge>>~\cite{tortoise-git} утилиты.
 
-%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Языки программирования}
-%%%%%%%%%%%%%%%%%%
-
-***
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 В данной работе было выполнено инструментирование фрагментов исходных текстов нескольких программ, созданных с использованием различных языков программирования общего назначения с разной степенью поддержки структурного программирования.
 
-Для утилиты TXL опубликованы описания грамматик некоторых языков программирования общего назначения, такие как \cite{txl-resources}:
+Для утилиты TXL опубликованы описания грамматик некоторых языков программирования общего назначения, такие как~\cite{txl-resources}:
 \begin{multicols}{2}
 \begin{itemize}[noitemsep]
   \item TXL
@@ -77,21 +75,59 @@
 \end{itemize}
 \end{multicols}
 
-Поскольку некоторые языки обладают схожей степенью строгости применительно к структурному программированию, например: C\# и Java, С++ и PHP, VisualBasic и Object Pascal, были рассмотрены программы на следующих языках программирования:
+Поскольку некоторые языки обладают схожей степенью строгости применительно к структурному программированию, например: C\# и Java, С++ и PHP, VisualBasic и Object Pascal.
+Ниже представлен список рассмотренных ЯП вместе с ключевыми особенностями, по которым был выбран тот или иной язык программирования.
+
 \begin{itemize}[noitemsep]
-  \item Java
-  \item Python
-  \item Object Pascal
-  \item С++
+  \item Java:
+    \begin{itemize}[noitemsep]
+      \item C-подобный стиль оформления блоков кода (использование символов <<\{>> и <<\}>>);
+      \item сильное влияние структурной парадигмы программирования (<<класс>> вложен в <<пакет>>, <<метод>> вложен в <<класс>>);
+      \item наличие вложенных структур одного вида (<<класс>> вложен в <<класс>>);
+      \item запрет описания функций вне тела класса;
+      \item название имени файла совпадает с именем описываемого класса;
+      \item запрет на повторное включение зависимостей;
+    \end{itemize}
+
+  \item Python:
+    \begin{itemize}[noitemsep]
+      \item применение различных уровней отступов (символ <<побел>> или <<табуляция>>);
+      \item влияние структурной парадигмы программирования (методы описываются в теле классов);
+      \item запрет использования блоков кода, оформенных отступами, в середине другого блока кода
+      \item различные варианты описания конструкции импорта зависимостей;
+    \end{itemize}
+
+  \item Object Pascal:
+    \begin{itemize}[noitemsep]
+      \item использование специальных ключевых слов <<begin>> и <<end>> для оформления блоков кода;
+      \item применение директив препроцессора;
+      \item наличие вложенных структур одного вида (<<функция>> вложена в <<функцию>>);
+      \item наличие вложенных структур разного вида (<<класс>> вложен в <<функцию>>);
+      \item опциональное использование символа <<;>> после инструкции или блока кода в зависимости от наличия или отсутствия ветки <<else>> конструкции ветвления;
+      \item слабое влияние структурной парадигмы программирования (методы класса описываются отдельно от тела самого класса);
+      \item вставка кода на другом языке программирования (различные диалекты языка ассемблера);
+      \item запрет на повторное включение зависимостей;
+    \end{itemize}
+
+  \item С++:
+    \begin{itemize}[noitemsep]
+      \item C-подобный стиль оформления блоков кода;
+      \item применение директив препроцессора;
+      \item наличие вложенных структур одного вида (<<класс>> вложен в <<класс>>);
+      \item наличие вложенных структур разного вида (<<класс>> вложен в <<функцию>>);
+      \item относительно (языка Java) слабое влияние структурной парадигмы программирования (методы класса обычно описываются отдельно от тела самого класса);
+      \item вставка кода на другом языке программирования (различные диалекты языка ассемблера);
+    \end{itemize}
 \end{itemize}
 
-В список были ключены языки Python и Object Pascal по причине применения отличного от <<C-подобного>> стиля оформления блоков кода: Python -- отступы, Object Pascal -- специальные ключевые слова <<begin>> и <<end>>.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Проекты с открытым исходным кодом}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 ***
 
-%%%%%%%%%%%%%%%%%%
-\subsection{Проекты с открытым исходным кодом}
-%%%%%%%%%%%%%%%%%%
+В данном разделе будут рассмотрены исходные тексты программ, использованных при тестировании прототипа.
+Тестирование было проведено как с заранее приготовленными синтетическими данными (специально подобранные упрощенные тексты программ, главная цель которых заключается в проведении оценки работоспособности разработанного метода инструментрования вместе с отладкой аннотации грамматики целевого языка программирования), так и с текстами из кодовых баз различных программных продуктов промышленного уровня.
 
 ***
 
@@ -102,10 +138,10 @@
   система и DSL, предназначенные для реализации принципов аспектно-ориентированного программирования в рамках языка программирования Java.
 
   \item Keras library \cite{keras} --
-  библиотека для высокоуровневой обработки и построения моделей глубокого обучения для языка Python.
+  библиотека-надстройка для высокоуровневой обработки и построения нейосетевых моделей глубинного обучения для языка Python.
 
   \item Lazarus IDE   \cite{lazarus} --
-  графическая среда быстрой разработки приложений на языке программирования Object Pascal и близких его диалектах.
+  графическая кросплатформенная среда быстрой разработки приложений на языке программирования Object Pascal и близких его диалектах.
 
   \item Boost library \cite{boost} --
   многофункциональная модульная библиотека для применения при построении программных продуктов с использованием языка программирования C++.
@@ -119,22 +155,258 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 В соответствии с рассмотренной выше программой и методикой испытаний было выполнено тестирование разработанного прототипа генератора систем инструментирования исходного текста программ.
-Далее приведены тестовые данные вместе с полученными результатами.
+В данной работе не будут рассмотрены тексты созданных аннотаций к представленным в~\cite{txl-resources} грамматикам.
+Важно заранее отметить, что некоторые элементы грамматик были незначительно изменены для большего соответствия используемому в разработанном прототипе подходу к задаче инструментирования.
+Далее будут приведены тестовые данные вместе с полученными результатами для каждого из выбранных ранее языков программирования.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Java}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 ***
 
-В данном разделе будут рассмотрены исходные тексты программ, использованных при тестировании прототипа.
-Тестирование было проведено как с заранее приготовленными синтетическими данными (специально подобранные упрощенные тексты программ, главная цель которых заключается в проведении оценки работоспособности разработанного метода инструментрования вместе с отладкой аннотации грамматики целевого языка программирования), так и с текстами из кодовых баз различных программных продуктов промышленного уровня.
+Для утилиты TXL существует корректная грамматика~\cite{txl-resources}, описывающая синтаксис языка Java версии 8.
 
 ***
 
-%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%
+\subsubsection{Искуственный пример}
+%%%%%%%%%%%%%%%%%%%
+
+***
+
+В листинге~\ref{test-java} приведен исходный текст синтетической тестовой программы для языка Java.
+
+\begin{lstlisting}[frame=single, language=Java, label={test-java}, caption={Исходный текст тестового приложения.}]
+package com.test;
+import java.util.logging.Level;
+import java.util.logging.ConsoleHandler;
+
+public class Main {
+  public static int a = 20;
+  public static int b = 10;
+
+  public static void something_else(String[] args) {
+    if (a >= b) {
+      if (a < 0)  System.out.println("Fizz Buzz!");
+    }
+    if (a >= b) {
+      if (a < 0)  System.out.println("Fizz Buzz!");
+    }
+  }
+
+  public static void main(String[] args) {
+    if (a >= b) {
+      if (a < 0)  System.out.println("Hello World!");
+    }
+    if (a >= b) {
+      if (a < 0)  System.out.println("Hello World!");
+    }
+  }
+}
+\end{lstlisting}
+
+В приведенном тексте программы производится объявление класса с именем <<Main>>, который содержит статические методы с именами <<main>> и <<something\_else>>.
+Помимо этого в теле класса представлены целочисленные поля с именами <<a>> и <<b>>.
+Каждый объявленный метод содержит несколько вложенных конструкций ветвления <<if>> вместе с несколькими вызовами стандартной функции вывода строки текста в консоль.
+
+Для синтетических тестовых примеров программ на языках Java и Python было составлено общее описание правил инструментирования, полный текст которого приведен в листинге~\ref{test-rules-java-n-python} (форматирование изменено для компактности).
+Аналогично были составлены правила для C++ и Object Pascal, которые будут рассмотрены далее.
+
+\begin{lstlisting}[frame=single, language=Python, label={test-rules-java-n-python}, caption={Описание правил инструментирования.}]
+use fragment "logging/dependencies"
+use fragment "logging/fields"
+use fragment "logging/init"
+use fragment "logging/message"
+
+context class_m:   { poi:class_name = "Main" }
+context method_m:  { poi:method_name matches "mai*" }
+context class_and_method_m:  class_m & method_m
+
+rules:
+  print_usefull_message_to_the_log:
+    @@ -> [first] imports # all:
+      add:  logging_dependencies
+
+    @class_m -> [first] class # before_body:
+      add:  logging_fields
+
+    @class_and_method_m -> [first] method # before_body:
+      add:  logging_init
+
+    @class_and_method_m -> [first] if # before:
+      make:
+        msg <- $std:pointcut + " <" + $std:node + "> block in [" + $poi:class_name + "] class, in {" + $poi:method_name + "} method";
+      add:
+        logging_message(msg)
+\end{lstlisting}
+
+В листинге~\ref{test-java-result} приведен программный код обработанной тестовой программы на языке Java, которая прошла операцию инструментирования при помощи разработанного прототипа генератора систем инструментирования (форматирование изменено для компактности; знак <<+>> в начале строки обозначает строку, которая была добавлена).
+
+\begin{lstlisting}[frame=single, language=Java, label={test-java-result}, caption={Текст инструментированного тестового приложения.}]
+package com.test;
+import java.util.logging.Level;
+import java.util.logging.ConsoleHandler;
++ import java.util.logging.Logger;
++ import java.util.logging.Handler;
+
+public class Main {
++ private static final Logger iLogger = Logger.getLogger(getClass().getName());
++ private static final Handler iHandler = newConsoleHandler();
+  public static int a = 20;
+  public static int b = 10;
+
+  public static void something_else (String [] args) {
+    if (a >= b) {
+      if (a < 0)  System.out.println ("Fizz Buzz!");
+    }
+    if (a >= b) {
+      if (a < 0)  System.out.println ("Fizz Buzz!");
+    }
+  }
+
+  public static void main (String [] args) {
++   iHandler.setLevel (Level.ALL);
++   iLogger.addHandler (iHandler);
++   iLogger.setLevel (Level.ALL);
++   {
++     {
++       iLogger.log(Level.FINE, "before <if_statement> block in [Main] class, in {main} method");
+        if (a >= b) {
+          if (a < 0)  System.out.println ("Hello World!");
+        }
++     }
+      if (a >= b) {
+        if (a < 0)  System.out.println ("Hello World!");
+      }
++   }
+  }
+}
+\end{lstlisting}
+
+Из полученного текста программы можно сделать вывод, что инструментирование прошло в точном соответствии с описанными в листинге~\ref{test-rules-java-n-python} пользовательскими правилами.
+Отсюда можно сделать заключение об успешном решении поставленной тестовой задачи в рамках языка Java.
+
+%%%%%%%%%%%%%%%%%%%
+\subsubsection{Проект производственного уровня}
+%%%%%%%%%%%%%%%%%%%
+
+***
+
+В листинге~\ref{test-rules-java} приведен текст описания правил инструментирования для обработки файла с исходным текстом проекта, созданного с использованием языка Java.
+Здесь и далее используемые фрагменты совпадают с описанными ранее тестовым примером~\ref{test-rules-java-n-python} и содержат только фрагменты <<logging/dependencies>>, <<logging/fields>>, <<logging/init>> и <<logging/message>>.
+
+\begin{lstlisting}[frame=single, language=Python, label={test-rules-java}, caption={Описание правил инструментирования. Java-проект.}]
+...
+context target_class:  { poi:class_name = "AsmManager" }
+
+rules:
+  trace_while_loops_in_Model:
+    @@ -> [first] imports # all:
+      add:  logging_dependencies
+
+    @target_class -> [first] class("Model*") # before_body:
+      add:  logging_fields
+
+    @target_class -> [first] class("Model*") -> [all] while # before:
+      make:  msg <- $std:pointcut + " " + $std:node;
+      add:   logging_message(msg)
+\end{lstlisting}
+
+***
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Python}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+***
+
+Для утилиты TXL существует грамматика~\cite{txl-resources}, описывающая синтаксис языка Python версии 2.5 и некоторые элементы из 3.0.
+
+***
+
+%%%%%%%%%%%%%%%%%%%
+\subsubsection{Искуственный пример}
+%%%%%%%%%%%%%%%%%%%
+
+***
+
+В листинге~\ref{test-python} приведен исходный текст синтетической тестовой программы для языка Python.
+
+\begin{lstlisting}[frame=single, language=Python, label={test-python}, caption={Исходный текст тестового приложения.}]
+from logging import *   # alternative form
+
+class Main:
+    def __init__(self):
+        self.a = 20
+        self.b = 10
+
+    def something_else(self, args):
+        if self.a >= self.b:
+          if a < 0:
+            print "Fizz Buzz!"
+        if a >= b:
+          if a < 0:
+            print "Fizz Buzz!"
+
+    def main(self, args):
+        if self.a >= self.b:
+          if self.a < 0:
+            print "Hello World!"
+        if self.a >= self.b:
+          if self.a < 0:
+            print "Hello World!"
+
+Main().main({})
+\end{lstlisting}
+
+Приведенный в листинге~\ref{test-python} текст программы аналогичен примеру для языка Java из листинга~\ref{test-java}.
+Отличия заключаются в отсутствии определения полей и статических методов класса ввиду особенностей языка Python, и использовании соответствующего набора стандартных зависимостей в соответствии с задачей.
+
+Как было указано ранее, для тестовых программ на языках Python и Java использовался один и тот же файл с описание правил инструментирования.
+
+***
+
+%%%%%%%%%%%%%%%%%%%
+\subsubsection{Проект производственного уровня}
+%%%%%%%%%%%%%%%%%%%
+
+***
+
+В листинге~\ref{test-rules-python} приведен текст описания правил инструментирования для обработки файла с исходным текстом проекта, созданного с использованием языка Python.
+
+\begin{lstlisting}[frame=single, language=Python, label={test-rules-python}, caption={Описание правил инструментирования. Python-проект.}]
+...
+context target_class:   { poi:class_name exists }
+context target_method:  { poi:method_name = "__init__" }
+context target_class_and_method:
+  target_class & target_method
+
+rules:
+  print_usefull_message_to_the_log:
+    @@ -> [first] imports # all:
+      add:  logging_dependencies
+
+    @target_class_and_method -> [first] method # before_body:
+      make:  msg <- "In constructor of [" + $poi:class_name + "] class";
+      add:   logging_message(msg)
+\end{lstlisting}
+
+***
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{C++}
-%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 ***
 
-Для утилиты TXL существует грамматика, описывающая синтаксис языка C++, а именно, стандарта ANSI C++ 3.0.
+Для утилиты TXL существует грамматика~\cite{txl-resources}, описывающая синтаксис языка C++, а именно, стандарта ANSI C++ 3.0.
+
+***
+
+%%%%%%%%%%%%%%%%%%%
+\subsubsection{Искуственный пример}
+%%%%%%%%%%%%%%%%%%%
 
 ***
 
@@ -145,16 +417,14 @@
 using namespace std;
 
 class Main {
-  int a = 10, b = 20;
+  int a = 20, b = 10;
 
   static void something_else() {
     if (a >= b) {
-      if (a < 0)
-        cout << "Fizz Buzz!" << endl;
+      if (a < 0)  cout << "Fizz Buzz!" << endl;
     }
     if (a >= b) {
-      if (a < 0)
-        cout << "Fizz Buzz!" << endl;
+      if (a < 0)  cout << "Fizz Buzz!" << endl;
     }
   }
 
@@ -163,12 +433,10 @@ class Main {
 
 void Main::main() {
   if (a >= b) {
-    if (a < 0)
-      cout << "Hello World!" << endl;
+    if (a < 0)  cout << "Hello World!" << endl;
   }
   if (a >= b) {
-    if (a < 0)
-      cout << "Hello World!" << endl;
+    if (a < 0)  cout << "Hello World!" << endl;
   }
 }
 
@@ -177,15 +445,48 @@ int main() {
 }
 \end{lstlisting}
 
+Приведенный в листинге~\ref{test-python} текст программы во многом соответствует примеру для языка Java из листинга~\ref{test-java}.
+Однако, явно заметно отличие, заключающееся в отделенном от тела класса описании реализации метода этого класса.
+Вместе с тем в данном примере были использованы стандартные для языка C++ зависимости, соответствующие обозначенной ранее задаче.
+
+Для синтетических тестовых примеров программ на языках С++ и Object Pascal было составлено общее описание правил инструментирования, полный текст которого приведен в листинге~\ref{cpp-n-pascal} (форматирование изменено для компактности).
+
+\begin{lstlisting}[frame=single, language=Python, label={test-rules-cpp-n-pascal}, caption={Описание правил инструментирования.}]
+...
+context namespace_m:  { poi:method_namespace matches "Main*" }
+context method_m:     { poi:method_name matches "mai*" }
+context class_and_method_m:  namespace_m & method_m
+
+rules:
+  print_usefull_message_to_the_log:
+    @@ -> [first] imports # all:
+      add:  logging_dependencies
+
+    @@ -> [level] class("Main") # before_body:
+      add:  logging_fields
+
+    @class_and_method_m -> [first] method # before_body:
+      add:  logging_init
+
+    @class_and_method_m -> [all] method -> [first] if("*<* 0") # before:
+      make:
+        msg <- $std:pointcut + " <" + $std:node + "> block in [" + $poi:method_name_full + "] method";
+      add:
+        logging_message(msg)
+\end{lstlisting}
+
+***
+
+%%%%%%%%%%%%%%%%%%%
+\subsubsection{Проект производственного уровня}
+%%%%%%%%%%%%%%%%%%%
+
 ***
 
 В листинге~\ref{test-rules-c} приведен текст описания правил инструментирования для обработки файла с исходным текстом проекта, созданного с использованием языка C++.
 
 \begin{lstlisting}[frame=single, language=Python, label={test-rules-c}, caption={Описание правил инструментирования. C++-проект.}]
-use fragment "logging/dependencies"
-use fragment "logging/fields"
-use fragment "logging/message"
-
+...
 context target_class:
   { poi:method_namespace matches "sha*" }
 
@@ -212,13 +513,19 @@ rules:
 
 ***
 
-%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Object Pascal}
-%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 ***
 
-Для утилиты TXL существует грамматика, описывающая синтаксис языка Object Pascal, а именно, подмножества, использующегося средой быстрой разработки приложений Borland Delphi 2006.
+Для утилиты TXL существует грамматика~\cite{txl-resources}, описывающая синтаксис языка Object Pascal, а именно, подмножества, использующегося средой быстрой разработки приложений Borland Delphi 2006.
+
+***
+
+%%%%%%%%%%%%%%%%%%%
+\subsubsection{Искуственный пример}
+%%%%%%%%%%%%%%%%%%%
 
 ***
 
@@ -226,7 +533,6 @@ rules:
 
 \begin{lstlisting}[frame=single, language=Pascal, label={test-pascal}, caption={Исходный текст тестового приложения.}]
 program test;
-
 uses SysUtils;
 
 type
@@ -242,13 +548,11 @@ procedure Main.something_else(args: array of string);
 begin
   if a >= b then
   begin
-    if a < 0 then
-      System.writeln('Fizz Buzz!');
+    if a < 0 then  System.writeln('Fizz Buzz!');
   end;
   if a >= b then
   begin
-    if a < 0 then
-      System.writeln('Fizz Buzz!');
+    if a < 0 then  System.writeln('Fizz Buzz!');
   end;
 end;
 
@@ -256,26 +560,35 @@ procedure Main.main(args: array of string);
 begin
   if a >= b then
   begin
-    if a < 0 then
-      System.writeln('Hello World!');
+    if a < 0 then  System.writeln('Hello World!');
   end;
   if a >= b then
   begin
-    if a < 0 then
-      System.writeln('Hello World!');
+    if a < 0 then  System.writeln('Hello World!');
   end;
 end;
 
 begin
   with Main.Create do
   begin
-    a := 10;
-    b := 20;
+    a := 20;
+    b := 10;
     main(['text']);
     Free;
   end;
 end.
 \end{lstlisting}
+
+Приведенный в листинге~\ref{test-pascal} текст программы аналогичен примеру для языка C++ из листинга~\ref{test-c}.
+Отличия заключаются в строго раздельном описании методов класса от тела этого класса вместе с невозможностью задания значений по-умолчанию для полей класса ввиду особенностей языка Object Pascal, и использовании модуля <<SysUtils>> в качестве стандартной зависимости в соответствии с задачей.
+
+Как было указано ранее, для тестовых программ на языках Object Pascal и C++ использовался один и тот же файл с описание правил инструментирования.
+
+***
+
+%%%%%%%%%%%%%%%%%%%
+\subsubsection{Проект производственного уровня}
+%%%%%%%%%%%%%%%%%%%
 
 ***
 
@@ -304,140 +617,11 @@ rules:
 
 ***
 
-%%%%%%%%%%%%%%%%%%
-\subsection{Java}
-%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Заключение}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 ***
-
-Для утилиты TXL существует грамматика, описывающая синтаксис языка Java версии 8.
-
-***
-
-В листинге~\ref{test-java} приведен исходный текст синтетической тестовой программы для языка Java.
-
-\begin{lstlisting}[frame=single, language=Java, label={test-java}, caption={Исходный текст тестового приложения.}]
-package com.test;
-
-import java.util.logging.Level;
-import java.util.logging.ConsoleHandler;
-
-public class Main {
-  public static int a = 10;
-  public static int b = 20;
-
-  public static void something_else(String[] args) {
-    if (a >= b) {
-      if (a < 0)
-        System.out.println("Fizz Buzz!");
-    }
-    if (a >= b) {
-      if (a < 0)
-        System.out.println("Fizz Buzz!");
-    }
-  }
-
-  public static void main(String[] args) {
-    if (a >= b) {
-      if (a < 0)
-        System.out.println("Hello World!");
-    }
-    if (a >= b) {
-      if (a < 0)
-        System.out.println("Hello World!");
-    }
-  }
-}
-\end{lstlisting}
-
-***
-
-В листинге~\ref{test-rules-java} приведен текст описания правил инструментирования для обработки файла с исходным текстом проекта, созданного с использованием языка Java.
-
-\begin{lstlisting}[frame=single, language=Python, label={test-rules-java}, caption={Описание правил инструментирования. Java-проект.}]
-...
-context target_class:  { poi:class_name = "AsmManager" }
-
-rules:
-  trace_while_loops_in_Model:
-    @@ -> [first] imports # all:
-      add:  logging_dependencies
-  
-    @target_class -> [first] class("Model*") # before_body:
-      add:  logging_fields
-  
-    @target_class -> [first] class("Model*") -> [all] while # before:
-      make:  msg <- $std:pointcut + " " + $std:node;
-      add:   logging_message(msg)
-\end{lstlisting}
-
-***
-
-%%%%%%%%%%%%%%%%%%
-\subsection{Python}
-%%%%%%%%%%%%%%%%%%
-
-***
-
-Для утилиты TXL существует грамматика, описывающая синтаксис языка Python версии 2.5 и некоторые элементы из 3.0.
-
-***
-
-В листинге~\ref{test-python} приведен исходный текст синтетической тестовой программы для языка Python.
-
-\begin{lstlisting}[frame=single, language=Python, label={test-python}, caption={Исходный текст тестового приложения.}]
-from logging import *
-
-class Main:
-    def __init__(self):
-        self.a = 10
-        self.b = 20
-
-    def something_else(self, args):
-        if self.a >= self.b:
-          if a < 0:
-            print "Fizz Buzz!"
-        if a >= b:
-          if a < 0:
-            print "Fizz Buzz!"
-
-    def main(self, args):
-        if self.a >= self.b:
-          if self.a < 0:
-            print "Hello World!"
-        if self.a >= self.b:
-          if self.a < 0:
-            print "Hello World!"
-
-Main().main({})
-\end{lstlisting}
-
-***
-
-В листинге~\ref{test-rules-python} приведен текст описания правил инструментирования для обработки файла с исходным текстом проекта, созданного с использованием языка Python.
-
-\begin{lstlisting}[frame=single, language=Python, label={test-rules-python}, caption={Описание правил инструментирования. Python-проект.}]
-...
-context target_class:   { poi:class_name exists }
-context target_method:  { poi:method_name = "__init__" }
-context target_class_and_method:
-  target_class & target_method
-
-rules:
-  print_usefull_message_to_the_log:
-    @@ -> [first] imports # all:
-      add:  logging_dependencies
-
-    @target_class_and_method -> [first] method # before_body:
-      make:  msg <- "In constructor of [" + $poi:class_name + "] class";
-      add:   logging_message(msg)
-\end{lstlisting}
-
-***
-
-%%%%%%%%%%%%%%%%%%
-\subsection{Развитие прототипа}
-%%%%%%%%%%%%%%%%%%
 
 Ниже перечислены возможные улучшения, собранные из наблюдения за работой прототипа и замеченных при проектировании и разработке принципов его работы:
 
@@ -467,7 +651,6 @@ rules:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 В данном разделе был рассмотрен процесс и результаты тестирования разработанного прототипа генератора систем автоматизации инструментирования программ.
-***
-Проведенные эксперименты на реальных и синтетических данных (исходных текстах программ) показали работоспособность подхода и инструмента.
-Были приведены замеченные в ходе тестирования недостатки и ограничения как прототипа, так и выбранного подхода, а также рассмотрены возможные способы дальнейшего развития данного прототипа.
+Проведенные эксперименты на синтетических данных (исходных текстах программ) и проектах промышленного уровня показали работоспособность подхода и инструмента.
+Были приведены замеченные в ходе тестирования недостатки и ограничения как прототипа, так и выбранного подхода, а также в заключении рассмотрены возможные способы дальнейшего развития данного прототипа.
 
