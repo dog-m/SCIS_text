@@ -1,12 +1,6 @@
 %#pragma -newline -id "-"
 #pragma -in 2
 
-tokens
-    % Python string forms - shortstrings are already captured by [stringlit] and [charlit]
-    longstringlit	"\"\"\"#[(\"\"\")]*\"\"\""
-    longcharlit		"'''#[(''')]*'''"
-end tokens
-
 keys 
     'with        'from
     'use         'fragment
@@ -28,7 +22,6 @@ end comments
 include "cnf_helper.txl"
 
 
-
 define program 
     [repeat use_fragment_statement+] [NL]
     [repeat context_definition] [NL]
@@ -36,11 +29,9 @@ define program
 end define
 
 
-
 define use_fragment_statement
     [srclinenumber] 'use 'fragment [stringlit] [NL]
 end define
-
 
 
 define context_definition
@@ -107,7 +98,6 @@ define group_id
 end define
 
 
-
 define compound_context
     %[context_expression]
     [cnf_entry]
@@ -130,8 +120,6 @@ define context_primary
 end define}%
 
 
-
-
 define rules
     [SPOFF] 'rules ': [SPON] [NL] [IN]
         [repeat single_rule+] [EX]
@@ -146,8 +134,6 @@ define rule_statement
     [rule_path] [NL] [IN]
         [rule_actions] [NL] [EX]
 end define
-
-
 
 
 define rule_path
@@ -179,7 +165,6 @@ define param_template
 end define
 
 
-
 define rule_actions
     [opt action_make]
     [action_add]
@@ -208,7 +193,6 @@ define template_args
 end define
 
 
-
 define string_chain
     [stringlit_or_constant] [repeat string_chain_node]
 end define
@@ -225,8 +209,6 @@ end define
 define string_constant
     [SP] [SPOFF] '$ [id_with_group] [SPON]
 end define
-
-
 
 % ==============================================
 
