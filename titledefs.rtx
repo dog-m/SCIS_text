@@ -27,7 +27,12 @@
 \def\workname{\CYRR\cyra\cyrb\cyro\cyrt\cyra}
 \def\approved{\workname\ \cyrd\cyro\cyrp\cyru\cyrshch\cyre\cyrn\cyra\ %
 \cyrk\ \cyrz\cyra\cyrshch\cyri\cyrt\cyre}
-\def\appos{\cyr\cyrz\cyra\cyrv.\ \cyrk\cyra\cyrf\cyre\cyrd\cyrr\cyro\cyrishrt}
+
+% \def\appos{\cyr\cyrz\cyra\cyrv.\ \cyrk\cyra\cyrf\cyre\cyrd\cyrr\cyro\cyrishrt} -- зав. кафедрой
+\def\appos{\cyr\cyrr\cyru\cyrk\cyro\cyrv\cyro\cyrd\cyri\cyrt\cyre\cyrl\cyrsftsn\ %
+\cyro\cyrb\cyrr\cyra\cyrz\cyro\cyrv\cyra\cyrt\cyre\cyrl\cyr\char252\cyrn\cyro\cyrishrt\ %
+\cyrp\cyrr\cyro\cyrg\cyrr\cyra\cyrm\cyrm\char251}
+
 \def\groupname{\cyr\cyrg\cyrr.}
 \def\topicname{}
 \def\topiclabel{}

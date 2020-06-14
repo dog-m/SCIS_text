@@ -15,9 +15,10 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+% pre-loading
 \RequirePackage{kvoptions}
 \RequirePackage{geometry}
-\RequirePackage{nomencl}
+\RequirePackage[intoc,english,russian]{nomencl}
 \RequirePackage{indentfirst}
 \RequirePackage{xstring}
 \RequirePackage{float}
