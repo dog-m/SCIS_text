@@ -166,7 +166,7 @@
   \CYRR\CYRE\CYRF\CYRE\CYRR\CYRA\CYRT
 }
 \newcommand\csseabstractnameen{%
-  THE ABSTRACT%
+  ABSTRACT%
 }
 \newcommand\stats@report{%
   \CYRN\cyra%
@@ -316,7 +316,7 @@
 }
 \newcommand\makeabstract{%
   \makeabstractru%
-
+  % \clearpage % новая страница между рефератом и abstract
   \makeabstracten%
 }
 
