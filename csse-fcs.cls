@@ -268,8 +268,8 @@
 }\keywordsen{}
 
 \newcommand\@makeabstract[4]{%
-  %\clearpage%
-  %\thispagestyle{empty}%
+  \clearpage%             --
+  \thispagestyle{empty}%  -- убрать нумерацию на рефератах
   %
   \@makeschapterhead{#1}%
   \@afterheading%
